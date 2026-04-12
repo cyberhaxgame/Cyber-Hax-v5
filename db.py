@@ -8,6 +8,7 @@ Base = declarative_base()
 DB_PATH = Path(__file__).resolve().with_name("cyber_hax.db")
 engine = create_engine(f"sqlite:///{DB_PATH.as_posix()}", echo=False, future=True)
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+DB_READY = False
 
 class User(Base):
     __tablename__ = "users"
@@ -23,4 +24,8 @@ class MatchHistory(Base):
     state_snapshot = Column(JSON)  # serialized JSON of final state
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+    DB_READY = True
+except Exception as exc:
+    print(f"[DB] Initialization skipped: {exc}")

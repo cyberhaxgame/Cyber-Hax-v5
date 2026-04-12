@@ -42,6 +42,8 @@ BOOKLET_TEXT = [
     "decoy - deploy a fake node connected to your current node",
     "stabilize - clear stun and activate a short shield",
     "log - view the most recent public events",
+    "rematch - vote for another round after a finished match",
+    "restart - restart the room and reset the room score",
     "quit - exit the client",
 ]
 
