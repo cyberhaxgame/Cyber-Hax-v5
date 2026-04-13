@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#081118" />
     <title>Cyber Hax v5</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
@@ -43,37 +44,42 @@
             locked nodes, and access keys to reach the server core first.
           </p>
 
-          <div class="hero-points">
-            <p>Built for real-time multiplayer with a single shareable invite link.</p>
-            <p>Hover nodes for intel, click to queue actions, and use the terminal for deeper plays.</p>
-            <p>Lightweight enough for fast browser play, clear enough for first-time testers.</p>
-          </div>
+          <details class="hero-details" id="heroDetails" open>
+            <summary>Quick briefing</summary>
+            <div class="hero-details-body">
+              <div class="hero-points">
+                <p>Built for real-time multiplayer with a single shareable invite link.</p>
+                <p>Tap or hover nodes for intel, use the action deck for fast plays, and the terminal for deeper calls.</p>
+                <p>Lightweight enough for fast browser play, clear enough for first-time testers.</p>
+              </div>
 
-          <div class="landing-grid">
-            <article class="landing-card">
-              <span>01</span>
-              <h3>Create or Join</h3>
-              <p>Start a fresh room or enter a room code from a friend.</p>
-            </article>
-            <article class="landing-card">
-              <span>02</span>
-              <h3>Read The Network</h3>
-              <p>Use sweeps, probes, and pathing to learn where the safest route opens.</p>
-            </article>
-            <article class="landing-card">
-              <span>03</span>
-              <h3>Exploit Faster</h3>
-              <p>Unlock routes, dodge traps, and reach the server before the other operator.</p>
-            </article>
-          </div>
+              <div class="landing-grid">
+                <article class="landing-card">
+                  <span>01</span>
+                  <h3>Create or Join</h3>
+                  <p>Start a fresh room or enter a room code from a friend.</p>
+                </article>
+                <article class="landing-card">
+                  <span>02</span>
+                  <h3>Read The Network</h3>
+                  <p>Use sweeps, probes, and pathing to learn where the safest route opens.</p>
+                </article>
+                <article class="landing-card">
+                  <span>03</span>
+                  <h3>Exploit Faster</h3>
+                  <p>Unlock routes, dodge traps, and reach the server before the other operator.</p>
+                </article>
+              </div>
 
-          <div class="how-strip">
-            <div>
-              <strong>How to Play</strong>
-              <p>Blue glow means active play. Mint nodes are the core. Gold nodes need unlocks. Pink means danger.</p>
+              <div class="how-strip">
+                <div>
+                  <strong>How to Play</strong>
+                  <p>Blue glow means active play. Mint nodes are the core. Gold nodes need unlocks. Pink means danger.</p>
+                </div>
+                <p id="landingInviteHint">Create a room to challenge a friend or paste a room code to join instantly.</p>
+              </div>
             </div>
-            <p id="landingInviteHint">Create a room to challenge a friend or paste a room code to join instantly.</p>
-          </div>
+          </details>
         </section>
 
         <section class="join-panel">
@@ -94,10 +100,13 @@
               <input id="sessionInput" name="session" autocomplete="off" maxlength="32" placeholder="A1B2C3" />
             </label>
 
-            <label class="field">
-              <span>Server Host</span>
-              <input id="serverInput" name="server" autocomplete="off" placeholder="wss://cyber-hax-server.onrender.com" />
-            </label>
+            <details class="advanced-server" id="advancedServer">
+              <summary>Advanced server settings</summary>
+              <label class="field">
+                <span>Server Host</span>
+                <input id="serverInput" name="server" autocomplete="off" placeholder="wss://cyber-hax-server.onrender.com" />
+              </label>
+            </details>
 
             <div class="join-actions">
               <button class="primary-btn" id="createRoomButton" type="button">Create Room</button>
@@ -301,7 +310,7 @@
           <p class="utility-line" id="metricNext">Next hint: connect to a room to receive a live objective.</p>
         </section>
 
-        <section class="sidebar-card">
+        <section class="sidebar-card node-inspector-card">
           <p class="eyebrow">Intel</p>
           <h3>Selected Node</h3>
           <div class="node-card" id="selectedNodeCard">

@@ -18,6 +18,8 @@ const PROFILE_STORAGE_KEY = "cyberHaxProfile";
 const SERVER_STORAGE_KEY = "cyberHaxServerBase";
 const DEPLOYMENT_FALLBACK_SERVER_BASE = "wss://cyber-hax-server.onrender.com";
 const HOSTED_BACKEND_HOST = "cyber-hax-server.onrender.com";
+const TOUCH_MEDIA_QUERY = "(hover: none), (pointer: coarse)";
+const COMPACT_MEDIA_QUERY = "(max-width: 920px)";
 
 const els = {
   joinSheet: document.getElementById("joinSheet"),
@@ -26,6 +28,8 @@ const els = {
   playerInput: document.getElementById("playerInput"),
   sessionInput: document.getElementById("sessionInput"),
   serverInput: document.getElementById("serverInput"),
+  heroDetails: document.getElementById("heroDetails"),
+  advancedServer: document.getElementById("advancedServer"),
   joinStatus: document.getElementById("joinStatus"),
   resumeButton: document.getElementById("resumeButton"),
   landingInviteHint: document.getElementById("landingInviteHint"),
@@ -116,6 +120,14 @@ const state = {
   profile: loadProfile(),
   fxContext: null,
 };
+
+function isTouchMode() {
+  return window.matchMedia(TOUCH_MEDIA_QUERY).matches;
+}
+
+function isCompactLayout() {
+  return window.matchMedia(COMPACT_MEDIA_QUERY).matches;
+}
 
 function loadProfile() {
   try {
@@ -224,6 +236,27 @@ function timeLeft(untilValue) {
 function setSheetOpen(isOpen) {
   els.joinSheet.classList.toggle("is-open", isOpen);
   document.body.classList.toggle("sheet-open", isOpen);
+}
+
+function applyResponsiveMode() {
+  const compact = isCompactLayout();
+  const touch = isTouchMode();
+  document.body.classList.toggle("is-compact-layout", compact);
+  document.body.classList.toggle("is-touch-ui", touch);
+
+  if (els.heroDetails) {
+    if (compact && els.heroDetails.open) {
+      els.heroDetails.open = false;
+    } else if (!compact && !els.heroDetails.open) {
+      els.heroDetails.open = true;
+    }
+  }
+
+  if (els.advancedServer) {
+    if (!compact && state.connectionStatus === "connected") {
+      els.advancedServer.open = false;
+    }
+  }
 }
 
 function openModal(modal) {
@@ -511,8 +544,14 @@ function nextHint(viewer) {
   if (state.room.status === "reconnecting") return "Hold position. The duel resumes once both operators are back.";
   if (state.gameState?.winner) return "Use rematch to keep the room score or restart to reset the room.";
   if (timeLeft(viewer?.stunned_until) > 0) return "Use stabilize or wait out the stun before pushing forward.";
-  if (state.selectedNode != null) return `Queued focus: ${currentNodeAction(state.selectedNode)} from the selected node.`;
-  return "Hover nodes for intel, click a node to queue a command, or run mission / hint.";
+  if (state.selectedNode != null) {
+    return isTouchMode()
+      ? `Selected node ${state.selectedNode}. Use the node actions or terminal send button to execute the play.`
+      : `Queued focus: ${currentNodeAction(state.selectedNode)} from the selected node.`;
+  }
+  return isTouchMode()
+    ? "Tap a node for intel, tap it again to queue the suggested action, or use mission / hint for quick guidance."
+    : "Hover nodes for intel, click a node to queue a command, or run mission / hint.";
 }
 
 function sendChat(text) {
@@ -555,7 +594,12 @@ function sendControl(action) {
 function queueCommand(command) {
   if (!command) return;
   els.commandInput.value = command;
-  els.commandInput.focus();
+  if (!isTouchMode()) {
+    els.commandInput.focus();
+  } else {
+    els.commandInput.blur();
+    pushToast(`Queued: ${command}`, "success");
+  }
   playUiTone("soft");
 }
 
@@ -786,7 +830,9 @@ function renderSelectedNodeCard() {
   const viewer = getViewer();
   const nodeId = state.hoveredNode ?? state.selectedNode;
   if (!state.gameState?.nodes?.[nodeId]) {
-    els.selectedNodeCard.textContent = "Select or hover a node to inspect its links, risks, and contextual actions.";
+    els.selectedNodeCard.textContent = isTouchMode()
+      ? "Tap a node to inspect its links, risks, and ready-to-run actions."
+      : "Select or hover a node to inspect its links, risks, and contextual actions.";
     return;
   }
   const node = state.gameState.nodes[nodeId];
@@ -794,6 +840,7 @@ function renderSelectedNodeCard() {
   const links = (node.neighbors || []).slice().sort((a, b) => a - b).join(", ") || "none";
   const action = currentNodeAction(nodeId);
   const autoUnlock = viewer?.collected_pwds?.[String(nodeId)] ? `unlock ${nodeId} auto` : "";
+  const touchMode = isTouchMode();
   els.selectedNodeCard.innerHTML = `
     <h4>Node ${nodeId}</h4>
     <div class="tag-row">
@@ -801,11 +848,12 @@ function renderSelectedNodeCard() {
     </div>
     <p>Links: ${links}</p>
     <p>Recommended action: ${action}</p>
+    <p>${touchMode ? "Tap an action below to place it in the terminal. Tap the same node again on the board to queue the default action quickly." : "Click an action below or queue it from the board."}</p>
     <div class="action-row">
-      <button type="button" data-queue="${action}">Queue ${action}</button>
-      <button type="button" data-queue="path ${nodeId}">Queue path</button>
-      <button type="button" data-queue="probe ${nodeId}">Queue probe</button>
-      ${autoUnlock ? `<button type="button" data-queue="${autoUnlock}">Queue unlock</button>` : ""}
+      <button type="button" data-queue="${action}">${touchMode ? "Use" : "Queue"} ${action}</button>
+      <button type="button" data-queue="path ${nodeId}">${touchMode ? "Use" : "Queue"} path</button>
+      <button type="button" data-queue="probe ${nodeId}">${touchMode ? "Use" : "Queue"} probe</button>
+      ${autoUnlock ? `<button type="button" data-queue="${autoUnlock}">${touchMode ? "Use" : "Queue"} unlock</button>` : ""}
     </div>
   `;
   els.selectedNodeCard.querySelectorAll("[data-queue]").forEach((button) => {
@@ -820,7 +868,7 @@ function createSvg(tagName, attrs = {}) {
 }
 
 function renderTooltip(event) {
-  const nodeId = state.hoveredNode;
+  const nodeId = isTouchMode() ? (state.selectedNode ?? state.hoveredNode) : state.hoveredNode;
   if (!state.gameState?.nodes?.[nodeId]) {
     els.boardTooltip.classList.add("hidden");
     return;
@@ -831,10 +879,19 @@ function renderTooltip(event) {
   const links = (node.neighbors || []).slice().sort((a, b) => a - b).join(", ") || "none";
   els.boardTooltip.innerHTML = `<strong>Node ${nodeId}</strong><br />${flags}<br />Links: ${links}<br />Suggested action: ${action}`;
   const rect = els.boardStage.getBoundingClientRect();
-  const x = event ? event.clientX - rect.left + 18 : 24;
-  const y = event ? event.clientY - rect.top + 18 : 24;
-  els.boardTooltip.style.left = `${Math.min(x, rect.width - 280)}px`;
-  els.boardTooltip.style.top = `${Math.min(y, rect.height - 140)}px`;
+  if (isTouchMode()) {
+    els.boardTooltip.style.left = "12px";
+    els.boardTooltip.style.right = "12px";
+    els.boardTooltip.style.top = "auto";
+    els.boardTooltip.style.bottom = "12px";
+  } else {
+    const x = event ? event.clientX - rect.left + 18 : 24;
+    const y = event ? event.clientY - rect.top + 18 : 24;
+    els.boardTooltip.style.right = "auto";
+    els.boardTooltip.style.bottom = "auto";
+    els.boardTooltip.style.left = `${Math.min(x, rect.width - 280)}px`;
+    els.boardTooltip.style.top = `${Math.min(y, rect.height - 140)}px`;
+  }
   els.boardTooltip.classList.remove("hidden");
 }
 function renderMap() {
@@ -843,12 +900,23 @@ function renderMap() {
   state.signalDots = [];
   const viewer = getViewer();
   if (!viewer || !state.gameState) return;
+  const touchMode = isTouchMode();
 
   const visible = visibleSetForViewer(viewer);
   const opponent = getOpponent(viewer);
   const edgeLayer = createSvg("g");
   const signalLayer = createSvg("g");
   const nodeLayer = createSvg("g");
+
+  svg.onclick = (event) => {
+    if (event.target === svg && touchMode) {
+      state.hoveredNode = null;
+      state.selectedNode = null;
+      els.boardTooltip.classList.add("hidden");
+      renderSelectedNodeCard();
+      renderMap();
+    }
+  };
 
   for (const [a, b] of state.gameState.edges || []) {
     if (!visible.has(a) || !visible.has(b)) continue;
@@ -898,25 +966,38 @@ function renderMap() {
       group.appendChild(badge);
     }
 
-    group.addEventListener("mouseenter", () => {
-      state.hoveredNode = nodeId;
-      renderSelectedNodeCard();
-      renderMap();
-      renderTooltip();
-    });
-    group.addEventListener("mousemove", (event) => {
-      state.hoveredNode = nodeId;
-      renderTooltip(event);
-    });
-    group.addEventListener("mouseleave", () => {
-      state.hoveredNode = null;
-      els.boardTooltip.classList.add("hidden");
-      renderSelectedNodeCard();
-      renderMap();
-    });
+    if (!touchMode) {
+      group.addEventListener("mouseenter", () => {
+        state.hoveredNode = nodeId;
+        renderSelectedNodeCard();
+        renderMap();
+        renderTooltip();
+      });
+      group.addEventListener("mousemove", (event) => {
+        state.hoveredNode = nodeId;
+        renderTooltip(event);
+      });
+      group.addEventListener("mouseleave", () => {
+        state.hoveredNode = null;
+        els.boardTooltip.classList.add("hidden");
+        renderSelectedNodeCard();
+        renderMap();
+      });
+    }
     group.addEventListener("click", async () => {
       await ensureFxContext();
+      const wasSelected = Number(state.selectedNode) === Number(nodeId);
       state.selectedNode = nodeId;
+      state.hoveredNode = touchMode ? nodeId : state.hoveredNode;
+      if (touchMode) {
+        renderSelectedNodeCard();
+        renderMap();
+        renderTooltip();
+        if (wasSelected) {
+          queueCommand(currentNodeAction(nodeId));
+        }
+        return;
+      }
       queueCommand(currentNodeAction(nodeId));
       renderSelectedNodeCard();
       renderMap();
@@ -980,6 +1061,7 @@ function bootstrap() {
   renderLogs();
   renderChat();
   renderToasts();
+  applyResponsiveMode();
   renderAll();
   refreshInviteFields();
   updateJoinStatus("Set a callsign, create or enter a room, and connect to the live session server.");
@@ -1024,6 +1106,13 @@ function bootstrap() {
     if (event.key === "F2") {
       event.preventDefault();
       setSheetOpen(true);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    applyResponsiveMode();
+    if (state.gameState) {
+      renderAll();
     }
   });
 
