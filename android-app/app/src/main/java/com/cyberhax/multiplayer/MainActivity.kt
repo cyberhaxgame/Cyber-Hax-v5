@@ -1,4 +1,4 @@
-package com.cyberhax.game
+package com.cyberhax.multiplayer
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -39,7 +39,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.ViewCompat
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
-import com.cyberhax.game.databinding.ActivityMainBinding
+import com.cyberhax.multiplayer.databinding.ActivityMainBinding
 import java.net.URI
 
 class MainActivity : AppCompatActivity() {
@@ -448,10 +448,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun currentConfiguredUrl(): String {
-        return if (BuildConfig.ALLOW_LOCAL_TESTING) {
+        val baseUrl = if (BuildConfig.ALLOW_LOCAL_TESTING) {
             preferences.getString(KEY_CUSTOM_URL, null)?.takeIf { it.isNotBlank() } ?: AppConfig.GAME_URL
         } else {
             AppConfig.GAME_URL
+        }
+
+        return try {
+            val uri = Uri.parse(baseUrl)
+            val builder = uri.buildUpon()
+            builder.appendQueryParameter("app", "android")
+            builder.build().toString()
+        } catch (e: Exception) {
+            baseUrl
         }
     }
 

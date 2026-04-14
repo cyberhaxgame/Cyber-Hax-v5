@@ -22,7 +22,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize"
             android:exported="true"
             android:launchMode="singleTask"
-            android:screenOrientation="sensorLandscape"
+            android:screenOrientation="fullSensor"
             android:theme="@style/Theme.CyberHax.Splash">
             <!-- Landscape is the default because the live game board plays best wide. -->
             <intent-filter>

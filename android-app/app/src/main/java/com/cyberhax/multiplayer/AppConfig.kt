@@ -1,4 +1,4 @@
-package com.cyberhax.game
+package com.cyberhax.multiplayer
 
 object AppConfig {
     // Change this to your permanent live game URL before release if needed.

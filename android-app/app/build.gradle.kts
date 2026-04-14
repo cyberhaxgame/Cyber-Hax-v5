@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -5,15 +7,15 @@ plugins {
 
 android {
     // API 35 keeps the wrapper aligned with current Play Store target requirements.
-    namespace = "com.cyberhax.game"
+    namespace = "com.cyberhax.multiplayer"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.cyberhax.game"
+        applicationId = "com.cyberhax.multiplayer"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -21,9 +23,26 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            val propertiesFile = rootProject.file("keystore.properties")
+            if (propertiesFile.exists()) {
+                val properties = Properties()
+                properties.load(propertiesFile.inputStream())
+                
+                val relativePath = properties.getProperty("storeFile")
+                storeFile = rootProject.file(relativePath)
+                storePassword = properties.getProperty("storePassword")
+                keyAlias = properties.getProperty("keyAlias")
+                keyPassword = properties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["usesCleartextTraffic"] = "false"
             buildConfigField("boolean", "ALLOW_LOCAL_TESTING", "false")
             proguardFiles(
