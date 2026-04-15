@@ -1,7 +1,7 @@
 :root {
   color-scheme: dark;
-  --bg: #07111f;
   --bg-deep: #050b16;
+  --bg: #07111f;
   --panel: rgba(14, 25, 44, 0.9);
   --panel-strong: rgba(10, 19, 35, 0.96);
   --line: rgba(108, 156, 220, 0.28);
@@ -39,17 +39,39 @@ body {
   font-family: "Aptos", "Segoe UI Variable", "Bahnschrift", sans-serif;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   overflow-x: hidden;
 }
 
-body.sheet-open {
+body.sheet-open,
+body.modal-open {
   overflow: hidden;
 }
 
 button,
-input {
+input,
+textarea,
+select {
   font: inherit;
+}
+
+button,
+input,
+textarea,
+select,
+.ghost-btn,
+.primary-btn,
+.secondary-btn,
+.command-card {
+  touch-action: manipulation;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .ambient {
@@ -84,556 +106,6 @@ input {
   background: rgba(255, 104, 167, 0.08);
 }
 
-.settings-toggle {
-  border: 1px solid rgba(128, 180, 255, 0.38);
-  background: rgba(8, 18, 34, 0.72);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 0.8rem 1.1rem;
-  backdrop-filter: blur(18px);
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
-}
-
-.top-controls {
-  position: fixed;
-  top: 1.25rem;
-  right: 1.25rem;
-  z-index: 30;
-  display: flex;
-  gap: 0.75rem;
-}
-
-.music-toggle {
-  border: 1px solid rgba(128, 180, 255, 0.38);
-  background: rgba(8, 18, 34, 0.72);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 0.8rem 1.1rem;
-  backdrop-filter: blur(18px);
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
-}
-
-.settings-toggle:hover,
-.music-toggle:hover,
-.quick-grid button:hover,
-.action-row button:hover,
-.secondary-btn:hover,
-.primary-btn:hover,
-.command-item:hover {
-  transform: translateY(-1px);
-  border-color: rgba(116, 236, 255, 0.68);
-  background: rgba(16, 34, 62, 0.96);
-}
-.command-deck.large {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.8rem;
-  padding-top: 1rem;
-}
-.app-grid {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(22rem, 25rem);
-  grid-template-rows: minmax(28rem, 1fr) minmax(18rem, 34vh);
-  grid-template-areas:
-    "board sidebar"
-    "terminal terminal";
-  gap: 1rem;
-  padding: 4.75rem 1.25rem 1.25rem;
-  min-height: 100svh;
-}
-
-.command-item {
-  font-size: 1.05rem;
-  padding: 1.1rem;
-  border-radius: 16px;
-}
-
-.board-panel,
-.sidebar-panel,
-.terminal-panel,
-.join-panel {
-  background: linear-gradient(180deg, rgba(15, 27, 48, 0.95), rgba(9, 18, 33, 0.92));
-  border: 1px solid rgba(110, 162, 230, 0.24);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
-}
-
-.board-panel,
-.sidebar-panel,
-.terminal-panel {
-  overflow: hidden;
-}
-
-.board-panel {
-  grid-area: board;
-  border-radius: var(--radius-xl);
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.board-header,
-.terminal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.2rem 1.2rem 0.75rem;
-}
-
-.board-header h2,
-.terminal-header h3,
-.sidebar-section h3,
-.join-copy h1 {
-  margin: 0.1rem 0 0;
-  font-family: "Consolas", "Cascadia Code", monospace;
-  letter-spacing: 0.02em;
-}
-
-.eyebrow {
-  margin: 0;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.72rem;
-}
-
-.subcopy,
-.utility-line,
-.join-status,
-.join-points p,
-.lede {
-  margin: 0.4rem 0 0;
-  color: var(--muted);
-  line-height: 1.55;
-}
-
-.board-stage {
-  position: relative;
-  flex: 1;
-  min-height: 20rem;
-  margin: 0 1rem 1rem;
-  border-radius: 24px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 18% 18%, rgba(116, 236, 255, 0.12), transparent 20%),
-    radial-gradient(circle at 86% 28%, rgba(108, 163, 255, 0.18), transparent 24%),
-    linear-gradient(180deg, rgba(8, 20, 38, 0.96), rgba(5, 13, 24, 0.98));
-}
-
-.board-stage::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(rgba(108, 163, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(108, 163, 255, 0.08) 1px, transparent 1px);
-  background-size: 3.35rem 3.35rem;
-  opacity: 0.46;
-  pointer-events: none;
-}
-
-#networkSvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-}
-
-.sidebar-panel {
-  grid-area: sidebar;
-  border-radius: var(--radius-xl);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  min-height: 0;
-}
-
-.sidebar-section,
-.terminal-column {
-  background: rgba(7, 16, 31, 0.48);
-  border: 1px solid rgba(116, 164, 232, 0.16);
-  border-radius: var(--radius-lg);
-  padding: 1rem;
-}
-
-.metric-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem 0.8rem;
-  margin: 0.8rem 0 0;
-}
-
-.metric-list div {
-  min-width: 0;
-}
-
-.metric-list dt {
-  color: var(--muted);
-  font-size: 0.8rem;
-  margin-bottom: 0.2rem;
-}
-
-.metric-list dd {
-  margin: 0;
-  font-weight: 600;
-  word-break: break-word;
-}
-
-.node-card {
-  margin-top: 0.8rem;
-  min-height: 9.5rem;
-  line-height: 1.5;
-}
-
-.node-card h4 {
-  margin: 0 0 0.55rem;
-  font-size: 1.05rem;
-}
-
-.tag-row,
-.action-row,
-.status-cluster,
-.join-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  padding: 0.32rem 0.62rem;
-  font-size: 0.8rem;
-  border: 1px solid rgba(116, 236, 255, 0.25);
-  background: rgba(13, 31, 56, 0.75);
-}
-
-.tag.server { color: var(--server); border-color: rgba(147, 255, 215, 0.36); }
-.tag.locked { color: var(--locked); border-color: rgba(255, 201, 109, 0.36); }
-.tag.mine { color: var(--mine); border-color: rgba(255, 124, 170, 0.36); }
-.tag.decoy { color: var(--warn); border-color: rgba(255, 207, 120, 0.36); }
-
-.quick-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.65rem;
-  margin-top: 0.8rem;
-}
-
-.quick-grid button,
-.action-row button,
-.secondary-btn,
-.primary-btn,
-.command-item {
-  border-radius: 999px;
-  padding: 0.72rem 0.95rem;
-  border: 1px solid rgba(116, 164, 232, 0.3);
-  color: var(--text);
-  background: rgba(12, 24, 44, 0.78);
-  cursor: pointer;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
-}
-
-.primary-btn {
-  background: linear-gradient(135deg, rgba(111, 237, 255, 0.95), rgba(106, 159, 255, 0.96));
-  color: #04101d;
-  border-color: rgba(164, 237, 255, 0.88);
-  font-weight: 700;
-}
-
-.terminal-panel {
-  grid-area: terminal;
-  border-radius: var(--radius-xl);
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.terminal-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
-  gap: 0.9rem;
-  padding: 0 1rem 1rem;
-  min-height: 0;
-  flex: 1;
-}
-
-.terminal-column {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.pane-label {
-  margin: 0;
-  padding-bottom: 0.7rem;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  border-bottom: 1px solid rgba(116, 164, 232, 0.12);
-}
-
-.log-output,
-.command-deck {
-  min-height: 0;
-  overflow: auto;
-  padding-top: 1rem;
-  font-family: "Consolas", "Cascadia Code", monospace;
-  line-height: 1.5;
-}
-
-.log-line { margin-bottom: 0.55rem; color: #dce8f8; }
-.log-line.command { color: var(--accent); }
-
-.command-item {
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  gap: 0.7rem;
-  text-align: left;
-  margin-top: 0.65rem;
-  border-radius: 14px;
-}
-
-.command-key {
-  color: var(--accent);
-  font-size: 0.88rem;
-}
-
-.terminal-form {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.8rem;
-  padding: 0 1rem 1rem;
-}
-
-.terminal-form input,
-.field input {
-  width: 100%;
-  border-radius: 18px;
-  border: 1px solid rgba(116, 164, 232, 0.26);
-  background: rgba(7, 16, 31, 0.9);
-  color: var(--text);
-  padding: 0.95rem 1rem;
-  outline: none;
-  transition: border-color 180ms ease, box-shadow 180ms ease;
-}
-
-.terminal-form input:focus,
-.field input:focus {
-  border-color: rgba(116, 236, 255, 0.74);
-  box-shadow: 0 0 0 3px rgba(116, 236, 255, 0.12);
-}
-
-.join-sheet {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: grid;
-  place-items: center;
-  padding: 1.25rem;
-  background: rgba(2, 8, 16, 0.72);
-  backdrop-filter: blur(14px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 220ms ease;
-}
-
-.join-sheet.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.join-panel {
-  width: min(72rem, 100%);
-  border-radius: 32px;
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 24rem);
-  gap: 1.2rem;
-  padding: 1.4rem;
-}
-
-.join-copy,
-.join-form {
-  padding: 1.2rem;
-}
-
-.join-copy {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.8rem;
-}
-
-.join-copy h1 {
-  font-size: clamp(2.6rem, 4.8vw, 4.6rem);
-  line-height: 0.96;
-}
-
-.join-form {
-  border-radius: 24px;
-  background: rgba(9, 18, 33, 0.82);
-  border: 1px solid rgba(116, 164, 232, 0.18);
-  display: grid;
-  gap: 0.9rem;
-  align-content: start;
-}
-
-.field {
-  display: grid;
-  gap: 0.45rem;
-}
-
-.field span {
-  color: var(--muted);
-  font-size: 0.88rem;
-}
-
-.field-wide {
-  grid-column: 1 / -1;
-}
-
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.3rem;
-  padding: 0.45rem 0.8rem;
-  border-radius: 999px;
-  background: rgba(11, 26, 47, 0.78);
-  border: 1px solid rgba(116, 236, 255, 0.28);
-  color: var(--text);
-}
-
-.status-pill.muted {
-  border-color: rgba(116, 164, 232, 0.18);
-  color: var(--muted);
-}
-
-.floating-banner {
-  position: absolute;
-  top: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  padding: 0.8rem 1rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 207, 120, 0.36);
-  background: rgba(30, 18, 7, 0.78);
-  color: var(--text);
-  backdrop-filter: blur(12px);
-}
-
-.floating-banner.winner {
-  border-color: rgba(255, 123, 152, 0.45);
-  background: rgba(38, 10, 19, 0.82);
-}
-
-.board-tooltip {
-  position: absolute;
-  z-index: 6;
-  width: min(16rem, calc(100% - 2rem));
-  border-radius: 16px;
-  border: 1px solid rgba(116, 236, 255, 0.28);
-  background: rgba(6, 15, 28, 0.95);
-  padding: 0.85rem 0.95rem;
-  box-shadow: var(--shadow);
-  pointer-events: none;
-  font-size: 0.92rem;
-  line-height: 1.45;
-}
-
-.hidden { display: none !important; }
-
-.edge-line {
-  stroke: rgba(115, 159, 226, 0.38);
-  stroke-width: 4;
-  stroke-linecap: round;
-}
-
-.edge-line.active {
-  stroke: rgba(116, 236, 255, 0.82);
-}
-
-.signal-dot {
-  fill: var(--accent);
-}
-
-.node-group { cursor: pointer; }
-.node-halo { fill: rgba(116, 236, 255, 0.12); }
-.node-ring { fill: rgba(255, 255, 255, 0.92); }
-.node-core { stroke: rgba(7, 18, 31, 0.82); stroke-width: 2; }
-.node-label-bg { fill: rgba(11, 22, 39, 0.86); stroke: rgba(116, 164, 232, 0.22); }
-.node-label { fill: var(--text); font-size: 12px; font-family: "Consolas", "Cascadia Code", monospace; }
-
-@media (max-width: 1140px) {
-  .app-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(24rem, 44svh) auto auto;
-    grid-template-areas:
-      "board"
-      "sidebar"
-      "terminal";
-  }
-
-  .terminal-grid,
-  .join-panel {
-    grid-template-columns: 1fr;
-  }
-}
-
-.command-item {
-  background: linear-gradient(135deg, #0f1f3a, #132a4d);
-  border: 1px solid rgba(116, 236, 255, 0.3);
-}
-
-.command-item:hover {
-  background: linear-gradient(135deg, #1b3a66, #1f4d88);
-  transform: scale(1.03);
-}
-
-.terminal-panel {
-  min-height: 320px;
-}
-
-@media (max-width: 720px) {
-  .app-grid {
-    padding: 4.5rem 0.8rem 0.8rem;
-  }
-
-  .board-header,
-  .terminal-header {
-    flex-direction: column;
-  }
-
-  .metric-list {
-    grid-template-columns: 1fr;
-  }
-
-  .terminal-form {
-    grid-template-columns: 1fr;
-  }
-
-  .top-controls {
-    top: 0.8rem;
-    right: 0.8rem;
-    gap: 0.5rem;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-}
-
 .scanlines {
   position: fixed;
   inset: 0;
@@ -646,670 +118,57 @@ input {
   z-index: 0;
 }
 
-.topbar,
-.hero-panel,
-.join-panel,
-.sidebar-card,
-.modal-card {
-  background: linear-gradient(180deg, rgba(15, 27, 48, 0.96), rgba(8, 17, 31, 0.92));
-  border: 1px solid rgba(110, 162, 230, 0.22);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
-}
-
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  margin: 1rem 1rem 0;
-  padding: 1rem 1.15rem;
-  border-radius: 24px;
-}
-
-.brand-block h1,
-.panel-header h2,
-.panel-header h3,
-.hero-panel h2,
-.join-panel h3,
-.sidebar-card h3,
-.modal-card h2 {
-  margin: 0.1rem 0 0;
-  font-family: "Consolas", "Cascadia Code", monospace;
-}
-
-.brand-block h1 {
-  font-size: clamp(1.5rem, 2vw, 2.2rem);
-}
-
-.tagline {
-  margin: 0.35rem 0 0;
-  color: var(--muted);
-}
-
-.topbar-actions,
-.room-actions,
-.terminal-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-}
-
-.ghost-btn,
-.compact {
-  border-radius: 999px;
-  border: 1px solid rgba(116, 164, 232, 0.24);
-  background: rgba(12, 24, 44, 0.82);
-  color: var(--text);
-  cursor: pointer;
-  padding: 0.8rem 1rem;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
-}
-
-.compact {
-  padding: 0.58rem 0.92rem;
-}
-
-.ghost-btn:hover,
-.compact:hover {
-  transform: translateY(-1px);
-  border-color: rgba(116, 236, 255, 0.68);
-  background: rgba(16, 34, 62, 0.96);
-}
-
-.full-width {
-  width: 100%;
-}
-
-.app-shell {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 24rem);
-  grid-template-rows: minmax(33rem, 1fr) minmax(22rem, 0.84fr);
-  grid-template-areas:
-    "board sidebar"
-    "terminal terminal";
-  gap: 1rem;
-  padding: 1rem;
-  min-height: calc(100svh - 6rem);
-}
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.1rem 1.1rem 0.85rem;
-}
-
-.header-stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, auto));
-  gap: 0.8rem;
-}
-
-.header-stat {
-  padding: 0.78rem 0.92rem;
-  border-radius: 18px;
-  background: rgba(8, 18, 35, 0.54);
-  border: 1px solid rgba(116, 236, 255, 0.12);
-}
-
-.header-stat span,
-.summary-grid span {
-  display: block;
-  color: var(--muted);
-  font-size: 0.76rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.header-stat strong,
-.summary-grid strong {
-  display: block;
-  margin-top: 0.3rem;
-}
-
-.board-footer {
-  display: grid;
-  gap: 0.6rem;
-  padding: 0.9rem 1.1rem 1rem;
-}
-
-.legend-row {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.legend-row span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-}
-
-.legend-dot {
-  width: 0.72rem;
-  height: 0.72rem;
-  border-radius: 999px;
-  display: inline-block;
-}
-
-.legend-dot.player { background: var(--accent); }
-.legend-dot.rival { background: var(--rival); }
-.legend-dot.server { background: var(--server); }
-.legend-dot.locked { background: var(--locked); }
-.legend-dot.mine { background: var(--mine); }
-
-.action-hint {
+.eyebrow {
   margin: 0;
-  color: var(--text);
-  font-weight: 600;
-}
-
-.sidebar {
-  grid-area: sidebar;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  min-height: 0;
-}
-
-.sidebar-card {
-  border-radius: var(--radius-xl);
-  padding: 1rem;
-}
-
-.room-code-row {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin-top: 0.8rem;
-}
-
-.room-code {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 6rem;
-  padding: 0.65rem 1rem;
-  border-radius: 999px;
-  border: 1px solid rgba(116, 236, 255, 0.24);
-  background: rgba(6, 18, 34, 0.92);
   color: var(--accent);
-  font-family: "Consolas", "Cascadia Code", monospace;
-  font-size: 1rem;
-  letter-spacing: 0.18em;
   text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
 }
 
-.scoreboard {
-  display: grid;
-  gap: 0.65rem;
-  margin-top: 1rem;
-}
-
-.score-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.75rem;
-  padding: 0.8rem 0.9rem;
-  border-radius: 18px;
-  background: rgba(6, 16, 31, 0.7);
-  border: 1px solid rgba(116, 236, 255, 0.12);
-}
-
-.score-name {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-weight: 600;
-}
-
-.presence-dot {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: rgba(148, 165, 201, 0.56);
-}
-
-.presence-dot.live {
-  background: var(--success);
-  box-shadow: 0 0 12px rgba(157, 255, 215, 0.44);
-}
-
-.score-sub {
-  margin-top: 0.25rem;
+.tagline,
+.subcopy,
+.utility-line,
+.join-status,
+.lede,
+.hero-points p,
+.mini-guide-list p,
+.matchmaking-meta,
+.action-hint,
+.legend-row,
+.score-sub,
+.pane-label,
+.field span,
+.metric-list dt,
+.summary-grid span {
   color: var(--muted);
-  font-size: 0.88rem;
 }
 
-.score-wins {
-  text-align: right;
-}
-
-.score-wins strong {
-  display: block;
-  font-size: 1.2rem;
-}
-
-.terminal-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.96fr);
-  gap: 1rem;
-  padding: 0 1rem 1rem;
-  min-height: 0;
-  flex: 1;
-}
-
-.command-deck {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.8rem;
-  align-content: start;
-}
-
-.command-card {
-  display: grid;
-  gap: 0.45rem;
-  padding: 1rem;
-  border-radius: 18px;
-  border: 1px solid rgba(116, 236, 255, 0.18);
-  background: linear-gradient(180deg, rgba(12, 24, 46, 0.88), rgba(8, 17, 32, 0.92));
-  color: var(--text);
-  cursor: pointer;
-  text-align: left;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
-}
-
-.command-card strong {
-  font-family: "Consolas", "Cascadia Code", monospace;
-  color: var(--accent);
-  font-size: 0.95rem;
-}
-
-.command-card span {
-  color: var(--muted);
-  line-height: 1.45;
-}
-
-.command-card:hover {
-  transform: translateY(-1px);
-  border-color: rgba(116, 236, 255, 0.68);
-  background: rgba(16, 34, 62, 0.96);
-}
-
-.join-shell {
-  width: min(78rem, 100%);
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 24rem);
-  gap: 1rem;
-}
-
-.hero-panel,
-.join-panel {
-  border-radius: 32px;
-  padding: 1.35rem;
-}
-
-.hero-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.hero-panel h2 {
-  font-size: clamp(2.3rem, 4vw, 4.4rem);
-  line-height: 0.97;
-}
-
-.hero-points,
-.mini-guide-list {
-  display: grid;
-  gap: 0.4rem;
-}
-
-.landing-grid,
-.modal-grid,
-.summary-grid {
-  display: grid;
-  gap: 0.8rem;
-}
-
-.landing-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.landing-card,
-.mini-guide,
-.how-strip,
-.summary-grid > div,
-.modal-grid article {
-  border-radius: 20px;
-  padding: 1rem;
-  background: rgba(8, 18, 35, 0.52);
-  border: 1px solid rgba(116, 236, 255, 0.12);
-}
-
-.landing-card span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  background: rgba(116, 236, 255, 0.1);
-  color: var(--accent);
-  font-family: "Consolas", "Cascadia Code", monospace;
-}
-
-.landing-card h3,
-.mini-guide h4,
-.modal-grid h3 {
-  margin: 0.8rem 0 0.2rem;
-}
-
-.how-strip {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.join-panel {
-  display: grid;
-  gap: 1rem;
-  align-content: start;
-}
-
-.join-status[data-tone="danger"] { color: var(--danger); }
-.join-status[data-tone="warning"] { color: var(--warn); }
-.join-status[data-tone="success"],
-.join-status[data-tone="accent"] { color: var(--accent); }
-
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 45;
-  display: grid;
-  place-items: center;
-  padding: 1.1rem;
-  background: rgba(2, 8, 16, 0.72);
-  backdrop-filter: blur(14px);
-}
-
-.modal-card {
-  width: min(38rem, 100%);
-  border-radius: 28px;
-  padding: 1.25rem;
-  display: grid;
-  gap: 1rem;
-}
-
-.modal-close {
-  justify-self: end;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.modal-grid,
-.summary-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.toast-stack {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 5;
-  display: grid;
-  gap: 0.55rem;
-  width: min(22rem, calc(100% - 2rem));
-}
-
-.toast {
-  padding: 0.85rem 0.95rem;
-  border-radius: 18px;
-  background: rgba(6, 16, 31, 0.9);
-  border: 1px solid rgba(116, 236, 255, 0.18);
-  box-shadow: var(--shadow);
-}
-
-.toast.success { border-color: rgba(157, 255, 215, 0.36); }
-.toast.error { border-color: rgba(255, 123, 152, 0.36); }
-.toast.warning { border-color: rgba(255, 207, 120, 0.36); }
-
-.floating-banner.reconnect {
-  top: 4.25rem;
-  border-color: rgba(116, 236, 255, 0.3);
-  background: rgba(10, 31, 47, 0.82);
-}
-
-.occupant-badge {
-  fill: rgba(9, 21, 40, 0.9);
-  stroke: rgba(116, 236, 255, 0.22);
-}
-
-.occupant-badge.viewer {
-  fill: rgba(116, 236, 255, 0.18);
-}
-
-.occupant-badge.rival {
-  fill: rgba(255, 176, 103, 0.18);
-}
-
-.occupant-text {
-  fill: var(--text);
-  font-size: 10px;
-  font-family: "Consolas", "Cascadia Code", monospace;
-}
-
-@media (max-width: 1220px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(28rem, 44svh) auto auto;
-    grid-template-areas:
-      "board"
-      "sidebar"
-      "terminal";
-  }
-
-  .sidebar {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
-  }
-
-  .join-shell,
-  .terminal-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .landing-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 860px) {
-  .topbar,
-  .panel-header,
-  .terminal-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .sidebar,
-  .metric-list,
-  .modal-grid,
-  .summary-grid,
-  .command-deck {
-    grid-template-columns: 1fr;
-  }
-
-  .room-code-row,
-  .join-actions,
-  .room-actions,
-  .terminal-form {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .topbar {
-    margin: 0;
-    border-radius: 0 0 24px 24px;
-  }
-
-  .app-shell {
-    padding: 0.85rem;
-  }
-
-  .hero-panel,
-  .join-panel,
-  .modal-card,
-  .sidebar-card {
-    padding: 0.95rem;
-  }
-
-  .hero-panel h2 {
-    font-size: 2rem;
-  }
-}
-
-.terminal-layout {
-  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr) minmax(18rem, 0.9fr);
-}
-
-.chat-column {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-
-.chat-output {
-  min-height: 0;
-  flex: 1;
-  overflow: auto;
-  padding-top: 0.95rem;
-  font-family: "Consolas", "Cascadia Code", monospace;
-  line-height: 1.45;
-}
-
-.chat-line {
-  margin-bottom: 0.7rem;
-  padding: 0.72rem 0.78rem;
-  border-radius: 16px;
-  background: rgba(10, 20, 38, 0.78);
-  border: 1px solid rgba(116, 164, 232, 0.12);
-}
-
-.chat-line.mine {
-  border-color: rgba(116, 236, 255, 0.24);
-  background: rgba(11, 33, 52, 0.82);
-}
-
-.chat-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.65rem;
-  margin-bottom: 0.32rem;
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.chat-author {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.chat-text {
-  color: var(--text);
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.chat-empty {
-  color: var(--muted);
-  padding-top: 0.5rem;
-}
-
-.chat-form {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.65rem;
-  margin-top: auto;
-}
-
-.chat-form input {
-  width: 100%;
-  border-radius: 16px;
-  border: 1px solid rgba(116, 164, 232, 0.26);
-  background: rgba(7, 16, 31, 0.9);
-  color: var(--text);
-  padding: 0.88rem 0.95rem;
-  outline: none;
-}
-
-.chat-form input:focus {
-  border-color: rgba(116, 236, 255, 0.74);
-  box-shadow: 0 0 0 3px rgba(116, 236, 255, 0.12);
-}
-
-@media (max-width: 860px) {
-  .chat-form {
-    grid-template-columns: 1fr;
-  }
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-}
-
-body.modal-open {
-  overflow: hidden;
-}
-
-textarea,
-select {
-  font: inherit;
-}
-
-button,
-input,
-textarea,
-select,
+.status-pill,
 .ghost-btn,
 .primary-btn,
 .secondary-btn,
-.command-card {
-  touch-action: manipulation;
-}
-
-.topbar,
-.topbar-actions,
-.app-shell,
-.sidebar,
-.terminal-layout,
-.join-shell,
-.join-panel,
+.compact,
+.console-tab,
+.room-code,
+.header-stat,
+.command-card,
+.chat-line,
+.terminal-pane,
+.landing-card,
+.mini-guide,
+.how-strip,
+.matchmaking-card,
+.node-card,
+.score-row,
+.summary-grid > div,
+.sidebar-card,
+.board-panel,
+.dock-terminal,
 .hero-panel,
-.modal-card,
-.room-code-row,
-.join-actions,
-.room-actions,
-.terminal-form,
-.chat-form {
+.join-panel,
+.modal-card {
   min-width: 0;
-}
-
-.topbar-actions,
-.terminal-badges,
-.room-actions {
-  align-items: center;
 }
 
 .ghost-btn,
@@ -1324,550 +183,17 @@ select,
 .terminal-form input,
 .chat-form input,
 #inviteLinkInput,
-#inviteMessage {
+#inviteMessage,
+#commandInput,
+#chatInput {
   min-height: 48px;
-}
-
-#inviteMessage {
-  resize: vertical;
-  min-height: 132px;
-  border-radius: 18px;
-  border: 1px solid rgba(116, 164, 232, 0.26);
-  background: rgba(7, 16, 31, 0.9);
-  color: var(--text);
-  padding: 0.95rem 1rem;
-  outline: none;
-}
-
-#inviteMessage:focus {
-  border-color: rgba(116, 236, 255, 0.74);
-  box-shadow: 0 0 0 3px rgba(116, 236, 255, 0.12);
-}
-
-.join-sheet {
-  align-items: start;
-  overflow-y: auto;
-}
-
-.join-shell {
-  align-items: start;
-}
-
-.hero-details,
-.advanced-server {
-  display: grid;
-  gap: 0.8rem;
-  margin-top: 0.2rem;
-}
-
-.hero-details summary,
-.advanced-server summary {
-  list-style: none;
-  cursor: pointer;
-  user-select: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  width: fit-content;
-  max-width: 100%;
-  min-height: 42px;
-  padding: 0.72rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid rgba(116, 164, 232, 0.24);
-  background: rgba(8, 18, 35, 0.7);
-  color: var(--text);
-  font-size: 0.92rem;
-  font-weight: 600;
-}
-
-.hero-details summary::-webkit-details-marker,
-.advanced-server summary::-webkit-details-marker {
-  display: none;
-}
-
-.hero-details summary::before,
-.advanced-server summary::before {
-  content: "+";
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.1rem;
-  height: 1.1rem;
-  border-radius: 999px;
-  background: rgba(116, 236, 255, 0.12);
-  color: var(--accent);
-  font-family: "Consolas", "Cascadia Code", monospace;
-  font-size: 0.95rem;
-  line-height: 1;
-}
-
-.hero-details[open] summary::before,
-.advanced-server[open] summary::before {
-  content: "−";
-}
-
-.hero-details-body {
-  display: grid;
-  gap: 1rem;
-}
-
-.advanced-server .field {
-  margin-top: 0.1rem;
-}
-
-.board-panel,
-.sidebar-card,
-.terminal-panel,
-.hero-panel,
-.join-panel,
-.modal-card {
-  overflow: hidden;
-}
-
-.board-stage {
-  aspect-ratio: 780 / 720;
-  min-height: clamp(18rem, 50svh, 38rem);
-}
-
-.legend-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem 1rem;
-}
-
-.selectedNodeCard .action-row {
-  margin-top: 0.9rem;
-}
-
-.selectedNodeCard .action-row button {
-  min-height: 44px;
-}
-
-.chat-output,
-.log-output {
-  scrollbar-width: thin;
-}
-
-@media (max-width: 1220px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    grid-template-areas:
-      "board"
-      "sidebar"
-      "terminal";
-    min-height: auto;
-  }
-
-  .sidebar {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
-  }
-
-  .terminal-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  .chat-column {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 920px) {
-  .topbar {
-    margin: 0;
-    border-radius: 0 0 24px 24px;
-    padding: calc(env(safe-area-inset-top, 0px) + 0.9rem) 0.95rem 0.95rem;
-  }
-
-  .topbar-actions {
-    width: 100%;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 0.15rem;
-    scrollbar-width: none;
-  }
-
-  .topbar-actions::-webkit-scrollbar {
-    display: none;
-  }
-
-  .topbar-actions > * {
-    flex: 0 0 auto;
-  }
-
-  .join-sheet {
-    padding: 0.85rem;
-  }
-
-  .join-shell {
-    grid-template-columns: 1fr;
-    gap: 0.85rem;
-    width: 100%;
-  }
-
-  .join-panel {
-    order: -1;
-  }
-
-  .hero-panel,
-  .join-panel,
-  .modal-card,
-  .sidebar-card {
-    border-radius: 26px;
-    padding: 1rem;
-  }
-
-  .hero-panel h2 {
-    font-size: clamp(1.8rem, 6vw, 2.8rem);
-    line-height: 1.02;
-  }
-
-  .landing-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .app-shell {
-    gap: 0.85rem;
-    padding: 0.85rem;
-  }
-
-  .board-stage {
-    min-height: min(58svh, 32rem);
-    margin: 0 0.85rem 0.8rem;
-    border-radius: 22px;
-  }
-
-  .panel-header,
-  .terminal-header {
-    padding: 1rem 0.95rem 0.8rem;
-  }
-
-  .header-stats {
-    width: 100%;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .sidebar {
-    grid-template-columns: 1fr;
-  }
-
-  .node-inspector-card {
-    order: -1;
-  }
-
-  .metric-list {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .room-code-row,
-  .room-actions,
-  .join-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .terminal-layout {
-    grid-template-columns: 1fr;
-    gap: 0.85rem;
-    padding: 0 0.85rem 0.85rem;
-  }
-
-  .log-output,
-  .chat-output {
-    min-height: 11rem;
-    max-height: 16rem;
-  }
-
-  .command-deck {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .chat-form,
-  .terminal-form {
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-  }
-
-  .board-footer {
-    padding: 0.8rem 0.9rem 1rem;
-  }
-
-  .legend-row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.45rem 0.75rem;
-    font-size: 0.86rem;
-  }
-
-  .board-tooltip {
-    left: 12px !important;
-    right: 12px;
-    top: auto !important;
-    bottom: 12px;
-    width: auto;
-    max-width: none;
-  }
-
-  .summary-grid,
-  .modal-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-card {
-    max-height: calc(100svh - 1.5rem);
-    overflow: auto;
-  }
-}
-
-@media (max-width: 680px) {
-  .brand-block h1 {
-    font-size: 1.35rem;
-  }
-
-  .tagline,
-  .subcopy,
-  .join-status,
-  .lede {
-    font-size: 0.96rem;
-  }
-
-  .eyebrow {
-    font-size: 0.68rem;
-    letter-spacing: 0.15em;
-  }
-
-  .header-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .metric-list {
-    grid-template-columns: 1fr;
-  }
-
-  .command-deck {
-    grid-template-columns: 1fr;
-  }
-
-  .selectedNodeCard .action-row {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .landing-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-details summary,
-  .advanced-server summary {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .field input,
-  .terminal-form input,
-  .chat-form input,
-  #inviteLinkInput,
-  #inviteMessage {
-    padding: 0.9rem;
-  }
-
-  .command-card {
-    min-height: 5.5rem;
-    padding: 1rem;
-  }
-
-  .room-code {
-    width: 100%;
-    justify-content: flex-start;
-    letter-spacing: 0.14em;
-  }
-
-  .topbar {
-    gap: 0.75rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .topbar,
-  .app-shell,
-  .join-sheet {
-    padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
-    padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
-  }
-
-  .board-stage {
-    min-height: min(54svh, 28rem);
-    margin: 0 0.75rem 0.75rem;
-  }
-
-  .legend-row {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-panel h2 {
-    font-size: clamp(1.55rem, 9vw, 2.2rem);
-  }
-
-  .status-pill,
-  .ghost-btn,
-  .primary-btn,
-  .secondary-btn {
-    min-height: 44px;
-    padding: 0.72rem 0.88rem;
-    font-size: 0.94rem;
-  }
-
-  .topbar-actions {
-    gap: 0.5rem;
-  }
-
-  .board-tooltip {
-    font-size: 0.88rem;
-    line-height: 1.4;
-  }
-}
-
-@media (max-width: 920px) and (orientation: landscape) {
-  .app-shell {
-    grid-template-columns: minmax(0, 1.08fr) minmax(17rem, 0.92fr);
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "board board"
-      "sidebar terminal";
-  }
-
-  .sidebar {
-    display: flex;
-  }
-
-  .node-inspector-card {
-    order: 0;
-  }
-
-  .board-stage {
-    min-height: min(46svh, 24rem);
-  }
-
-  .terminal-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (hover: none), (pointer: coarse) {
-  .ghost-btn:hover,
-  .compact:hover,
-  .quick-grid button:hover,
-  .action-row button:hover,
-  .secondary-btn:hover,
-  .primary-btn:hover,
-  .command-item:hover,
-  .command-card:hover {
-    transform: none;
-  }
-
-  .node-group {
-    cursor: default;
-  }
-}
-
-.matchmaking-card {
-  display: grid;
-  gap: 0.85rem;
-  padding: 1rem;
-  border-radius: 26px;
-  border: 1px solid rgba(116, 236, 255, 0.2);
-  background:
-    radial-gradient(circle at top right, rgba(116, 236, 255, 0.08), transparent 34%),
-    linear-gradient(180deg, rgba(7, 18, 33, 0.92), rgba(8, 16, 29, 0.9));
-}
-
-.matchmaking-copy {
-  display: grid;
-  gap: 0.3rem;
-}
-
-.matchmaking-copy h4 {
-  margin: 0;
-  font-family: "Consolas", "Cascadia Code", monospace;
-  font-size: 1.05rem;
-}
-
-.matchmaking-status-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.matchmaking-meta {
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.45;
-}
-
-.matchmaking-status-copy {
-  margin: 0;
-}
-
-.matchmaking-actions {
-  align-items: stretch;
-}
-
-#sidebarMatchmakingButton {
-  flex: 1 1 100%;
-}
-
-.status-pill[data-state="searching"] {
-  border-color: rgba(116, 236, 255, 0.4);
-  color: var(--accent);
-}
-
-.status-pill[data-state="matched"] {
-  border-color: rgba(147, 255, 215, 0.42);
-  color: var(--server);
-}
-
-.status-pill[data-state="error"] {
-  border-color: rgba(255, 124, 170, 0.42);
-  color: var(--danger);
-}
-
-.ghost-btn:disabled,
-.primary-btn:disabled,
-.secondary-btn:disabled {
-  opacity: 0.58;
-  cursor: not-allowed;
-  transform: none;
-}
-
-@media (max-width: 920px) {
-  .matchmaking-card {
-    padding: 0.95rem;
-  }
-
-  .matchmaking-status-row {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .matchmaking-copy h4 {
-    font-size: 1rem;
-  }
-
-  .matchmaking-meta {
-    font-size: 0.86rem;
-  }
 }
 
 body.ui-refresh {
   --surface-ink: #091726;
-  --surface-muted: #5f708a;
+  --surface-muted: #4e637f;
   --surface-bg: rgba(248, 251, 255, 0.88);
-  --surface-bg-strong: rgba(255, 255, 255, 0.94);
+  --surface-bg-strong: rgba(255, 255, 255, 0.95);
   --surface-edge: rgba(17, 38, 64, 0.11);
   --surface-shadow: 0 30px 80px rgba(4, 12, 22, 0.18);
   --surface-accent: rgba(116, 236, 255, 0.15);
@@ -1889,6 +215,47 @@ body.ui-refresh.deck-mode {
   --surface-button-hover: rgba(255, 255, 255, 0.12);
 }
 
+body.ui-refresh .topbar,
+body.ui-refresh .hero-panel,
+body.ui-refresh .join-panel,
+body.ui-refresh .sidebar-card,
+body.ui-refresh .board-panel,
+body.ui-refresh .dock-terminal,
+body.ui-refresh .modal-card {
+  background: linear-gradient(180deg, var(--surface-bg-strong), var(--surface-bg));
+  border: 1px solid var(--surface-edge);
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(24px);
+}
+
+body.ui-refresh .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 24;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 1rem 0;
+  padding: 1rem 1.25rem 0.9rem;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(5, 10, 18, 0.44), rgba(5, 10, 18, 0));
+}
+
+body.ui-refresh .topbar-brand-row,
+body.ui-refresh .topbar-center,
+body.ui-refresh .topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+body.ui-refresh .topbar-actions {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
 body.ui-refresh .brand-mark {
   width: 2.7rem;
   height: 2.7rem;
@@ -1908,34 +275,9 @@ body.ui-refresh .brand-mark span {
   transform: rotate(45deg);
 }
 
-body.ui-refresh.deck-mode .brand-mark {
-  background: rgba(255, 255, 255, 0.94);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-body.ui-refresh .topbar {
-  position: sticky;
-  top: 0;
-  z-index: 24;
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) auto auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem 0.9rem;
-  backdrop-filter: blur(28px);
-  background: linear-gradient(180deg, rgba(5, 10, 18, 0.44), rgba(5, 10, 18, 0));
-}
-
-body.ui-refresh .topbar-brand-row,
-body.ui-refresh .topbar-center,
-body.ui-refresh .topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-width: 0;
-}
-
-body.ui-refresh .brand-block {
+body.ui-refresh .brand-block,
+body.ui-refresh .panel-heading,
+body.ui-refresh .card-headline {
   min-width: 0;
 }
 
@@ -1945,8 +287,11 @@ body.ui-refresh .panel-header h3,
 body.ui-refresh .sidebar-card h3,
 body.ui-refresh .modal-card h2,
 body.ui-refresh .join-panel h3,
-body.ui-refresh .hero-panel h2 {
+body.ui-refresh .hero-panel h2,
+body.ui-refresh .card-headline h3 {
+  margin: 0.1rem 0 0;
   color: var(--surface-ink);
+  font-family: "Consolas", "Cascadia Code", monospace;
 }
 
 body.ui-refresh .tagline,
@@ -1956,13 +301,12 @@ body.ui-refresh .join-status,
 body.ui-refresh .mini-guide-list p,
 body.ui-refresh .hero-points p,
 body.ui-refresh .lede,
-body.ui-refresh .matchmaking-meta {
+body.ui-refresh .matchmaking-meta,
+body.ui-refresh .action-hint,
+body.ui-refresh .legend-row,
+body.ui-refresh .pane-label,
+body.ui-refresh .metric-list dt {
   color: var(--surface-muted);
-}
-
-body.ui-refresh .topbar-actions {
-  justify-content: flex-end;
-  flex-wrap: wrap;
 }
 
 body.ui-refresh .status-pill,
@@ -1970,27 +314,29 @@ body.ui-refresh .ghost-btn,
 body.ui-refresh .secondary-btn,
 body.ui-refresh .primary-btn {
   min-height: 2.75rem;
-}
-
-body.ui-refresh .status-pill {
-  border-radius: 999px;
-  border: 1px solid var(--surface-edge);
-  background: var(--surface-bg);
-  color: var(--surface-ink);
-  box-shadow: 0 12px 26px rgba(6, 15, 28, 0.08);
-}
-
-body.ui-refresh .status-pill.muted {
-  color: var(--surface-muted);
-}
-
-body.ui-refresh .ghost-btn,
-body.ui-refresh .secondary-btn,
-body.ui-refresh .primary-btn {
   border-radius: 1rem;
   border: 1px solid var(--surface-edge);
   box-shadow: none;
   backdrop-filter: blur(20px);
+}
+
+body.ui-refresh .status-pill {
+  border-radius: 999px;
+  background: var(--surface-bg);
+  color: var(--surface-ink);
+}
+
+body.ui-refresh .status-pill.muted,
+body.ui-refresh .console-tab,
+body.ui-refresh .field span,
+body.ui-refresh .room-code,
+body.ui-refresh .pane-label,
+body.ui-refresh .summary-grid span,
+body.ui-refresh .metric-list dt,
+body.ui-refresh .chat-meta,
+body.ui-refresh .chat-empty,
+body.ui-refresh .score-sub {
+  color: var(--surface-muted);
 }
 
 body.ui-refresh .ghost-btn,
@@ -2007,7 +353,14 @@ body.ui-refresh .primary-btn {
 
 body.ui-refresh .ghost-btn:hover,
 body.ui-refresh .secondary-btn:hover,
-body.ui-refresh .primary-btn:hover {
+body.ui-refresh .primary-btn:hover,
+body.ui-refresh .console-tab:hover,
+body.ui-refresh .command-card:hover {
+  transform: translateY(-1px);
+}
+
+body.ui-refresh .ghost-btn:hover,
+body.ui-refresh .secondary-btn:hover {
   background: var(--surface-button-hover);
   color: var(--surface-ink);
 }
@@ -2017,29 +370,34 @@ body.ui-refresh .primary-btn:hover {
 }
 
 body.ui-refresh .join-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  align-items: start;
   padding: 1.4rem 1.25rem 1.2rem;
+  overflow-y: auto;
   background: rgba(3, 10, 19, 0.58);
   backdrop-filter: blur(28px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+body.ui-refresh .join-sheet.is-open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 body.ui-refresh .join-shell {
   max-width: 1380px;
+  width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1.18fr) minmax(21rem, 0.92fr);
   gap: 1.15rem;
-}
-
-body.ui-refresh .hero-panel,
-body.ui-refresh .join-panel,
-body.ui-refresh .sidebar-card,
-body.ui-refresh .board-panel,
-body.ui-refresh .dock-terminal,
-body.ui-refresh .modal-card {
-  background: linear-gradient(180deg, var(--surface-bg-strong), var(--surface-bg));
-  border: 1px solid var(--surface-edge);
-  box-shadow: var(--surface-shadow);
-  backdrop-filter: blur(24px);
+  align-items: start;
 }
 
 body.ui-refresh .hero-panel,
@@ -2064,11 +422,82 @@ body.ui-refresh .hero-panel::after {
   pointer-events: none;
 }
 
+body.ui-refresh .hero-panel h2 {
+  font-size: clamp(2.3rem, 4vw, 4.4rem);
+  line-height: 0.97;
+}
+
+body.ui-refresh .hero-details,
+body.ui-refresh .advanced-server {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 0.2rem;
+}
+
+body.ui-refresh .hero-details summary,
+body.ui-refresh .advanced-server summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 0.72rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-edge);
+  background: var(--surface-soft);
+  color: var(--surface-ink);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+body.ui-refresh .hero-details summary::-webkit-details-marker,
+body.ui-refresh .advanced-server summary::-webkit-details-marker {
+  display: none;
+}
+
+body.ui-refresh .hero-details summary::before,
+body.ui-refresh .advanced-server summary::before {
+  content: "+";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: rgba(116, 236, 255, 0.12);
+  color: var(--accent);
+  font-family: "Consolas", "Cascadia Code", monospace;
+  font-size: 0.95rem;
+}
+
+body.ui-refresh .hero-details[open] summary::before,
+body.ui-refresh .advanced-server[open] summary::before {
+  content: "−";
+}
+
+body.ui-refresh .hero-details-body,
+body.ui-refresh .hero-points,
+body.ui-refresh .mini-guide-list,
+body.ui-refresh .landing-grid,
+body.ui-refresh .modal-grid,
+body.ui-refresh .summary-grid,
+body.ui-refresh .hero-points,
+body.ui-refresh .matchmaking-copy {
+  display: grid;
+  gap: 0.8rem;
+}
+
+body.ui-refresh .hero-points {
+  gap: 0.4rem;
+}
+
 body.ui-refresh .landing-grid {
   margin-top: 1.25rem;
-  display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.8rem;
 }
 
 body.ui-refresh .landing-card,
@@ -2094,9 +523,38 @@ body.ui-refresh .landing-card {
 }
 
 body.ui-refresh .landing-card span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: rgba(116, 236, 255, 0.1);
+  color: #2255bb;
   font: 700 0.72rem/1 "Consolas", "Cascadia Code", monospace;
   letter-spacing: 0.18em;
-  color: var(--accent-2);
+}
+
+body.ui-refresh .landing-card h3,
+body.ui-refresh .mini-guide h4,
+body.ui-refresh .modal-grid h3,
+body.ui-refresh .matchmaking-copy h4,
+body.ui-refresh .how-strip strong {
+  margin: 0;
+  color: var(--surface-ink);
+}
+
+body.ui-refresh .landing-card p,
+body.ui-refresh .hero-points p,
+body.ui-refresh .mini-guide-list p,
+body.ui-refresh .how-strip p,
+body.ui-refresh .join-panel p,
+body.ui-refresh .matchmaking-meta,
+body.ui-refresh .field span,
+body.ui-refresh .quick-rules p {
+  margin: 0;
+  color: #324d68;
+  line-height: 1.55;
 }
 
 body.ui-refresh .how-strip,
@@ -2110,17 +568,20 @@ body.ui-refresh .mini-guide {
   padding: 1rem 1.05rem;
 }
 
-body.ui-refresh .advanced-server summary,
-body.ui-refresh .hero-details summary {
-  color: var(--surface-ink);
+body.ui-refresh .join-panel {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
 }
 
-body.ui-refresh .field span,
-body.ui-refresh .room-code,
-body.ui-refresh .pane-label,
-body.ui-refresh .summary-grid span,
-body.ui-refresh .metric-list dt {
-  color: var(--surface-muted);
+body.ui-refresh .join-form,
+body.ui-refresh .field {
+  display: grid;
+  gap: 0.9rem;
+}
+
+body.ui-refresh .field {
+  gap: 0.45rem;
 }
 
 body.ui-refresh .field input,
@@ -2129,12 +590,24 @@ body.ui-refresh #commandInput,
 body.ui-refresh #chatInput,
 body.ui-refresh #inviteLinkInput,
 body.ui-refresh #inviteMessage {
+  width: 100%;
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(17, 38, 64, 0.08);
   color: var(--surface-ink);
-  min-height: 3rem;
   border-radius: 1rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  padding: 0.95rem 1rem;
+  outline: none;
+}
+
+body.ui-refresh .field input:focus,
+body.ui-refresh .field textarea:focus,
+body.ui-refresh #commandInput:focus,
+body.ui-refresh #chatInput:focus,
+body.ui-refresh #inviteLinkInput:focus,
+body.ui-refresh #inviteMessage:focus {
+  border-color: rgba(116, 236, 255, 0.74);
+  box-shadow: 0 0 0 3px rgba(116, 236, 255, 0.12);
 }
 
 body.ui-refresh.deck-mode .field input,
@@ -2149,14 +622,60 @@ body.ui-refresh.deck-mode #inviteMessage {
   box-shadow: none;
 }
 
+body.ui-refresh .join-actions,
+body.ui-refresh .room-actions,
+body.ui-refresh .room-code-row,
+body.ui-refresh .terminal-form,
+body.ui-refresh .chat-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+}
+
+body.ui-refresh .room-code-row,
+body.ui-refresh .room-actions {
+  grid-template-columns: 1fr;
+}
+
+body.ui-refresh .full-width {
+  width: 100%;
+}
+
+body.ui-refresh .matchmaking-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at top right, rgba(116, 236, 255, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(235, 242, 255, 0.92), rgba(228, 237, 252, 0.88));
+}
+
+body.ui-refresh .matchmaking-status-row,
+body.ui-refresh .matchmaking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+body.ui-refresh .matchmaking-actions {
+  align-items: stretch;
+}
+
+body.ui-refresh #sidebarMatchmakingButton {
+  flex: 1 1 100%;
+}
+
 body.ui-refresh .app-shell {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr) minmax(20rem, 25rem);
+  grid-template-columns: minmax(16rem, 18rem) minmax(0, 1fr) minmax(21rem, 24rem);
   gap: 1rem;
-  padding: 0 1.25rem 1.25rem;
-  min-height: calc(100svh - 5.55rem);
+  padding: 1rem;
+  min-height: calc(100svh - 6rem);
+  align-items: start;
 }
 
 body.ui-refresh .operator-rail,
@@ -2176,7 +695,8 @@ body.ui-refresh .board-panel {
   overflow: hidden;
 }
 
-body.ui-refresh .card-headline {
+body.ui-refresh .card-headline,
+body.ui-refresh .panel-header {
   display: grid;
   gap: 0.2rem;
   margin-bottom: 0.8rem;
@@ -2191,53 +711,35 @@ body.ui-refresh .scoreboard {
 body.ui-refresh .score-row {
   border-radius: 1rem;
   padding: 0.9rem 0.95rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
 }
 
 body.ui-refresh .score-name,
 body.ui-refresh .score-wins strong,
 body.ui-refresh .metric-list dd,
 body.ui-refresh .summary-grid strong,
-body.ui-refresh .room-code {
+body.ui-refresh .room-code,
+body.ui-refresh .header-stat strong,
+body.ui-refresh .command-card strong,
+body.ui-refresh .log-line,
+body.ui-refresh .chat-author,
+body.ui-refresh .chat-text {
   color: var(--surface-ink);
 }
 
-body.ui-refresh .room-code-row {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
 body.ui-refresh .room-code {
-  flex: 1;
-  min-width: 0;
-  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 6rem;
   padding: 0.95rem 1rem;
+  border-radius: 1rem;
   background: var(--surface-soft);
   border: 1px solid var(--surface-edge);
   font: 700 1.05rem/1 "Consolas", "Cascadia Code", monospace;
   letter-spacing: 0.16em;
-}
-
-body.ui-refresh .room-actions {
-  display: grid;
-  gap: 0.7rem;
-  margin-top: 0.95rem;
-}
-
-body.ui-refresh .room-actions > * {
-  width: 100%;
-}
-
-body.ui-refresh .metric-list {
-  margin-top: 0;
-}
-
-body.ui-refresh .board-panel {
-  min-height: 0;
-}
-
-body.ui-refresh .board-header {
-  padding: 0.2rem 0.2rem 0.95rem;
 }
 
 body.ui-refresh .header-stats {
@@ -2254,56 +756,85 @@ body.ui-refresh .header-stat {
   border: 1px solid var(--surface-edge);
 }
 
-body.ui-refresh .header-stat span {
-  display: block;
-  margin-bottom: 0.2rem;
-  color: var(--surface-muted);
-  font-size: 0.74rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+body.ui-refresh .board-panel {
+  min-height: 0;
 }
 
-body.ui-refresh .header-stat strong {
-  color: var(--surface-ink);
+body.ui-refresh .board-header,
+body.ui-refresh .terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.2rem 0.2rem 0.95rem;
 }
 
 body.ui-refresh .board-stage {
+  position: relative;
   margin: 0;
-  min-height: clamp(30rem, 62vh, 46rem);
+  min-height: clamp(24rem, 52vh, 36rem);
+  max-height: clamp(24rem, 52vh, 36rem);
   border-radius: 1.4rem;
+  overflow: hidden;
   border: 1px solid rgba(110, 162, 230, 0.14);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(116, 236, 255, 0.12), transparent 20%),
+    radial-gradient(circle at 86% 28%, rgba(108, 163, 255, 0.18), transparent 24%),
+    linear-gradient(180deg, rgba(8, 20, 38, 0.96), rgba(5, 13, 24, 0.98));
+}
+
+body.ui-refresh .board-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(108, 163, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(108, 163, 255, 0.08) 1px, transparent 1px);
+  background-size: 3.35rem 3.35rem;
+  opacity: 0.46;
+  pointer-events: none;
+}
+
+body.ui-refresh #networkSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
 }
 
 body.ui-refresh .board-footer {
   display: grid;
   gap: 0.55rem;
-  padding: 1rem 0.2rem 0.1rem;
+  padding: 0.8rem 0.2rem 0.2rem;
 }
 
-body.ui-refresh .legend-row,
-body.ui-refresh .action-hint {
-  color: var(--surface-muted);
+body.ui-refresh .legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1rem;
 }
 
-body.ui-refresh .intel-dock {
-  min-height: 0;
+body.ui-refresh .legend-dot {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 999px;
+  display: inline-block;
 }
 
-body.ui-refresh .node-card {
-  border-radius: 1.15rem;
-  padding: 1rem;
-}
+.legend-dot.player { background: var(--accent); }
+.legend-dot.rival { background: var(--rival); }
+.legend-dot.server { background: var(--server); }
+.legend-dot.locked { background: var(--locked); }
+.legend-dot.mine { background: var(--mine); }
 
 body.ui-refresh .dock-terminal {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  flex: 1;
-}
-
-body.ui-refresh .terminal-header {
-  padding: 0.15rem 0.15rem 0.95rem;
+  min-height: clamp(24rem, 52vh, 36rem);
+  max-height: clamp(24rem, 52vh, 36rem);
+  overflow: hidden;
 }
 
 body.ui-refresh .console-tab-strip {
@@ -2326,28 +857,25 @@ body.ui-refresh .console-tab {
   transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
 }
 
-body.ui-refresh .console-tab:hover,
 body.ui-refresh .console-tab.is-active {
-  transform: translateY(-1px);
   background: linear-gradient(135deg, rgba(116, 236, 255, 0.2), rgba(108, 163, 255, 0.17));
   border-color: rgba(116, 236, 255, 0.42);
   color: var(--surface-ink);
 }
 
 body.ui-refresh .terminal-stack {
-  position: relative;
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   min-height: 0;
-  flex: 1;
   padding: 0 0.15rem;
 }
 
 body.ui-refresh .terminal-pane {
   display: none;
   flex-direction: column;
+  flex: 1 1 auto;
   min-height: 0;
-  flex: 1;
   border-radius: 1.2rem;
   padding: 0.95rem;
 }
@@ -2360,13 +888,36 @@ body.ui-refresh .log-output,
 body.ui-refresh .command-deck,
 body.ui-refresh .chat-output {
   min-height: 0;
-  flex: 1;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding-top: 0.85rem;
+  scrollbar-width: thin;
+}
+
+body.ui-refresh .log-output {
+  min-height: 15rem;
+}
+
+body.ui-refresh .log-line {
+  margin-bottom: 0.65rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.9rem;
+  background: rgba(11, 24, 41, 0.05);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+body.ui-refresh .log-line.command {
+  color: #0070a8;
 }
 
 body.ui-refresh .command-deck {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.7rem;
+  align-content: start;
 }
 
 body.ui-refresh .command-card {
@@ -2376,24 +927,41 @@ body.ui-refresh .command-card {
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
-body.ui-refresh .command-card strong,
-body.ui-refresh .log-line,
-body.ui-refresh .chat-author,
-body.ui-refresh .chat-text {
-  color: var(--surface-ink);
+body.ui-refresh .command-card span {
+  color: var(--surface-muted);
+  line-height: 1.45;
 }
 
-body.ui-refresh .command-card span,
-body.ui-refresh .chat-meta,
-body.ui-refresh .chat-empty,
-body.ui-refresh .score-sub {
-  color: var(--surface-muted);
+body.ui-refresh .chat-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+body.ui-refresh .chat-line {
+  margin-bottom: 0.7rem;
+  padding: 0.72rem 0.78rem;
+  border-radius: 16px;
+}
+
+body.ui-refresh .chat-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.32rem;
+  font-size: 0.78rem;
+}
+
+body.ui-refresh .chat-text {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 body.ui-refresh .terminal-input-shell {
   display: grid;
   gap: 0.8rem;
   padding: 0.95rem 0.15rem 0.15rem;
+  flex-shrink: 0;
 }
 
 body.ui-refresh .terminal-form,
@@ -2406,20 +974,158 @@ body.ui-refresh .chat-form button {
   min-width: 9rem;
 }
 
+body.ui-refresh .modal {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  padding: 1.1rem;
+  background: rgba(2, 8, 16, 0.72);
+  backdrop-filter: blur(14px);
+}
+
 body.ui-refresh .modal-card {
+  width: min(38rem, 100%);
   border-radius: 1.75rem;
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+body.ui-refresh .modal-grid,
+body.ui-refresh .summary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.ui-refresh .modal-close {
+  justify-self: end;
+  border: 0;
+  background: transparent;
+  color: var(--surface-muted);
+  cursor: pointer;
+}
+
+body.ui-refresh .toast-stack {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 5;
+  display: grid;
+  gap: 0.55rem;
+  width: min(22rem, calc(100% - 2rem));
 }
 
 body.ui-refresh .toast {
+  padding: 0.85rem 0.95rem;
+  border-radius: 18px;
   color: var(--surface-ink);
   background: var(--surface-bg-strong);
+  border: 1px solid rgba(116, 236, 255, 0.18);
+  box-shadow: var(--surface-shadow);
 }
 
-body.ui-refresh.deck-mode .sidebar-card,
-body.ui-refresh.deck-mode .dock-terminal,
-body.ui-refresh.deck-mode .board-panel,
+body.ui-refresh .floating-banner {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 207, 120, 0.36);
+  background: rgba(30, 18, 7, 0.78);
+  color: var(--text);
+  backdrop-filter: blur(12px);
+}
+
+body.ui-refresh .board-tooltip {
+  position: absolute;
+  z-index: 6;
+  width: min(16rem, calc(100% - 2rem));
+  border-radius: 16px;
+  border: 1px solid rgba(116, 236, 255, 0.28);
+  background: rgba(6, 15, 28, 0.95);
+  padding: 0.85rem 0.95rem;
+  box-shadow: var(--surface-shadow);
+  pointer-events: none;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+body.ui-refresh .occupant-badge {
+  fill: rgba(9, 21, 40, 0.9);
+  stroke: rgba(116, 236, 255, 0.22);
+}
+
+body.ui-refresh .occupant-badge.viewer {
+  fill: rgba(116, 236, 255, 0.18);
+}
+
+body.ui-refresh .occupant-badge.rival {
+  fill: rgba(255, 176, 103, 0.18);
+}
+
+body.ui-refresh .occupant-text,
+body.ui-refresh .node-label {
+  fill: var(--text);
+  font-size: 10px;
+  font-family: "Consolas", "Cascadia Code", monospace;
+}
+
+body.ui-refresh .node-group {
+  cursor: pointer;
+}
+
+body.ui-refresh .node-halo {
+  fill: rgba(116, 236, 255, 0.12);
+}
+
+body.ui-refresh .node-ring {
+  fill: rgba(255, 255, 255, 0.92);
+}
+
+body.ui-refresh .node-core {
+  stroke: rgba(7, 18, 31, 0.82);
+  stroke-width: 2;
+}
+
+body.ui-refresh .node-label-bg {
+  fill: rgba(11, 22, 39, 0.86);
+  stroke: rgba(116, 164, 232, 0.22);
+}
+
+body.ui-refresh .edge-line {
+  stroke: rgba(115, 159, 226, 0.38);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+body.ui-refresh .edge-line.active {
+  stroke: rgba(116, 236, 255, 0.82);
+}
+
+body.ui-refresh .signal-dot {
+  fill: var(--accent);
+}
+
+body.ui-refresh #selectedNodeCard,
+body.ui-refresh .node-inspector-card {
+  display: none !important;
+}
+
+body.ui-refresh:not(.deck-mode) #deckStatusPill {
+  background: linear-gradient(135deg, rgba(116, 236, 255, 0.18), rgba(108, 163, 255, 0.14));
+  border-color: rgba(116, 236, 255, 0.45);
+  color: #0070a8;
+  font-weight: 700;
+}
+
 body.ui-refresh.deck-mode .hero-panel,
 body.ui-refresh.deck-mode .join-panel,
+body.ui-refresh.deck-mode .sidebar-card,
+body.ui-refresh.deck-mode .board-panel,
+body.ui-refresh.deck-mode .dock-terminal,
 body.ui-refresh.deck-mode .modal-card {
   background: linear-gradient(180deg, rgba(8, 17, 31, 0.96), rgba(7, 14, 27, 0.92));
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.4);
@@ -2458,14 +1164,20 @@ body.ui-refresh.deck-mode .log-line.command {
 
 @media (max-width: 1260px) {
   body.ui-refresh .app-shell {
-    grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr);
+    grid-template-columns: 1fr;
+    min-height: auto;
   }
 
   body.ui-refresh .intel-dock {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+    display: flex;
+    flex-direction: column;
     align-items: stretch;
+  }
+
+  body.ui-refresh .board-stage,
+  body.ui-refresh .dock-terminal {
+    min-height: 26rem;
+    max-height: 26rem;
   }
 }
 
@@ -2473,6 +1185,9 @@ body.ui-refresh.deck-mode .log-line.command {
   body.ui-refresh .topbar {
     grid-template-columns: 1fr;
     justify-items: start;
+    margin: 0;
+    border-radius: 0 0 24px 24px;
+    padding: calc(env(safe-area-inset-top, 0px) + 0.9rem) 0.95rem 0.95rem;
   }
 
   body.ui-refresh .topbar-center,
@@ -2481,15 +1196,54 @@ body.ui-refresh.deck-mode .log-line.command {
     flex-wrap: wrap;
   }
 
-  body.ui-refresh .app-shell,
+  body.ui-refresh .topbar-actions {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.15rem;
+    scrollbar-width: none;
+  }
+
+  body.ui-refresh .topbar-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.ui-refresh .topbar-actions > * {
+    flex: 0 0 auto;
+  }
+
   body.ui-refresh .join-shell,
+  body.ui-refresh .app-shell,
   body.ui-refresh .intel-dock {
     display: flex;
     flex-direction: column;
   }
 
+  body.ui-refresh .join-sheet {
+    padding: 0.85rem;
+  }
+
+  body.ui-refresh .hero-panel,
+  body.ui-refresh .join-panel,
+  body.ui-refresh .modal-card,
+  body.ui-refresh .sidebar-card,
+  body.ui-refresh .board-panel,
+  body.ui-refresh .dock-terminal {
+    border-radius: 1.35rem;
+    padding: 0.95rem;
+  }
+
+  body.ui-refresh .hero-panel h2 {
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    line-height: 1.02;
+  }
+
+  body.ui-refresh .landing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   body.ui-refresh .app-shell {
     gap: 0.9rem;
+    padding: 0.85rem;
   }
 
   body.ui-refresh .operator-rail {
@@ -2504,12 +1258,27 @@ body.ui-refresh.deck-mode .log-line.command {
     order: 3;
   }
 
-  body.ui-refresh .board-stage {
-    min-height: clamp(22rem, 62vh, 34rem);
+  body.ui-refresh .board-stage,
+  body.ui-refresh .dock-terminal {
+    min-height: 22rem;
+    max-height: 22rem;
+  }
+
+  body.ui-refresh .header-stats {
+    width: 100%;
+  }
+
+  body.ui-refresh .header-stat {
+    flex: 1 1 calc(50% - 0.4rem);
   }
 
   body.ui-refresh .console-tab-strip {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  body.ui-refresh .modal-grid,
+  body.ui-refresh .summary-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2521,16 +1290,11 @@ body.ui-refresh.deck-mode .log-line.command {
     padding-right: 0.85rem;
   }
 
-  body.ui-refresh .hero-panel,
-  body.ui-refresh .join-panel,
-  body.ui-refresh .sidebar-card,
-  body.ui-refresh .board-panel,
-  body.ui-refresh .dock-terminal {
-    border-radius: 1.35rem;
-    padding: 0.9rem;
-  }
-
-  body.ui-refresh .landing-grid {
+  body.ui-refresh .landing-grid,
+  body.ui-refresh .modal-grid,
+  body.ui-refresh .summary-grid,
+  body.ui-refresh .command-deck,
+  body.ui-refresh .metric-list {
     grid-template-columns: 1fr;
   }
 
@@ -2546,8 +1310,10 @@ body.ui-refresh.deck-mode .log-line.command {
     gap: 0.65rem;
   }
 
-  body.ui-refresh .board-stage {
+  body.ui-refresh .board-stage,
+  body.ui-refresh .dock-terminal {
     min-height: clamp(20rem, 54vh, 28rem);
+    max-height: clamp(20rem, 54vh, 28rem);
   }
 
   body.ui-refresh .header-stats {
@@ -2556,5 +1322,422 @@ body.ui-refresh.deck-mode .log-line.command {
 
   body.ui-refresh .header-stat {
     flex: 1 1 calc(50% - 0.4rem);
+  }
+}
+
+@media (max-width: 480px) {
+  body.ui-refresh .hero-panel h2 {
+    font-size: clamp(1.55rem, 9vw, 2.2rem);
+  }
+
+  body.ui-refresh .status-pill,
+  body.ui-refresh .ghost-btn,
+  body.ui-refresh .primary-btn,
+  body.ui-refresh .secondary-btn {
+    min-height: 44px;
+    padding: 0.72rem 0.88rem;
+    font-size: 0.94rem;
+  }
+
+  body.ui-refresh .board-tooltip {
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 920px) and (orientation: landscape) {
+  body.ui-refresh .board-stage,
+  body.ui-refresh .dock-terminal {
+    min-height: min(46svh, 24rem);
+    max-height: min(46svh, 24rem);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  body.ui-refresh .ghost-btn:hover,
+  body.ui-refresh .secondary-btn:hover,
+  body.ui-refresh .primary-btn:hover,
+  body.ui-refresh .console-tab:hover,
+  body.ui-refresh .command-card:hover {
+    transform: none;
+  }
+
+  body.ui-refresh .node-group {
+    cursor: default;
+  }
+}
+/* ===== FINAL CLEAN GAMEPLAY OVERRIDE ===== */
+
+body.ui-refresh {
+  --gameplay-panel-height: clamp(30rem, 65vh, 42rem);
+}
+
+/* topbar */
+body.ui-refresh .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 24;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0.5rem 0.6rem 0;
+  padding: 0.7rem 1rem;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(8, 16, 28, 0.72), rgba(8, 16, 28, 0.42));
+  border: 1px solid rgba(116, 236, 255, 0.10);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(14px);
+}
+
+body.ui-refresh .topbar-brand-row,
+body.ui-refresh .topbar-center,
+body.ui-refresh .topbar-actions {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+body.ui-refresh .topbar-brand-row {
+  gap: 0.75rem;
+}
+
+body.ui-refresh .topbar-center {
+  justify-content: center;
+  gap: 0.55rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+body.ui-refresh .topbar-actions {
+  justify-content: flex-end;
+  gap: 0.55rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+body.ui-refresh .topbar .eyebrow,
+body.ui-refresh .topbar .tagline,
+body.ui-refresh .brand-block h1 {
+  color: #eef6ff;
+}
+
+body.ui-refresh .brand-block h1 {
+  margin: 0.1rem 0 0;
+  line-height: 1;
+}
+
+body.ui-refresh .topbar .tagline {
+  margin-top: 0.2rem;
+  opacity: 0.86;
+}
+
+body.ui-refresh .status-pill,
+body.ui-refresh .ghost-btn,
+body.ui-refresh .secondary-btn,
+body.ui-refresh .primary-btn {
+  min-height: 42px;
+  padding: 0.65rem 0.95rem;
+  white-space: nowrap;
+}
+
+body.ui-refresh .topbar-center .status-pill,
+body.ui-refresh .topbar-actions .ghost-btn {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.ui-refresh .topbar-center .status-pill {
+  max-width: 10rem;
+}
+
+body.ui-refresh #sessionPill {
+  max-width: 11.5rem;
+}
+
+body.ui-refresh #deckStatusPill {
+  max-width: 8.5rem;
+}
+
+body.ui-refresh .topbar-actions .ghost-btn {
+  max-width: 8.5rem;
+  font-size: 0.95rem;
+}
+
+/* overall gameplay shell */
+body.ui-refresh .app-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(15rem, 17rem) minmax(0, 1fr) minmax(22rem, 24rem);
+  gap: 0.75rem;
+  padding: 0.5rem 0.6rem 0.6rem;
+  min-height: calc(100svh - 5.25rem);
+  align-items: start;
+}
+
+body.ui-refresh .sidebar-card,
+body.ui-refresh .board-panel,
+body.ui-refresh .dock-terminal {
+  border-radius: 1.7rem;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+
+/* headers */
+body.ui-refresh .board-header,
+body.ui-refresh .terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.1rem 0.1rem 0.55rem;
+}
+
+/* board */
+body.ui-refresh .board-stage {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  min-height: var(--gameplay-panel-height);
+  max-height: var(--gameplay-panel-height);
+  border-radius: 1rem;
+}
+
+body.ui-refresh .board-footer {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.55rem 0.1rem 0.1rem;
+}
+
+body.ui-refresh .legend-row {
+  gap: 0.5rem 0.8rem;
+}
+
+/* terminal */
+body.ui-refresh .dock-terminal {
+  min-height: var(--gameplay-panel-height);
+  max-height: var(--gameplay-panel-height);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  min-width: 0;
+}
+
+body.ui-refresh .console-tab-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding: 0 0.1rem 0.55rem;
+}
+
+body.ui-refresh .terminal-stack {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 0.1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+body.ui-refresh .terminal-pane {
+  display: none;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1.2rem;
+  padding: 0.7rem;
+}
+
+body.ui-refresh .terminal-pane.is-active {
+  display: flex;
+}
+
+body.ui-refresh .pane-label {
+  margin: 0 0 0.3rem;
+}
+
+body.ui-refresh .log-output,
+body.ui-refresh .command-deck,
+body.ui-refresh .chat-output {
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 0.45rem;
+  scrollbar-width: thin;
+}
+
+body.ui-refresh .log-output {
+  min-height: 0;
+}
+
+body.ui-refresh .command-deck {
+  align-content: start;
+}
+
+body.ui-refresh .chat-output {
+  display: flex;
+  flex-direction: column;
+}
+
+body.ui-refresh .log-line {
+  margin-bottom: 0.65rem;
+  padding: 0.8rem 0.9rem;
+  line-height: 1.55;
+  font-size: 1rem;
+}
+
+body.ui-refresh .terminal-input-shell {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.1rem 0.1rem;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+body.ui-refresh .terminal-form,
+body.ui-refresh .chat-form {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+}
+
+body.ui-refresh .terminal-form input,
+body.ui-refresh .chat-form input {
+  min-width: 0;
+  min-height: 42px;
+}
+
+body.ui-refresh .terminal-form button,
+body.ui-refresh .chat-form button {
+  min-width: 8.8rem;
+  min-height: 42px;
+  align-self: stretch;
+}
+
+/* responsive */
+@media (max-width: 1260px) {
+  body.ui-refresh {
+    --gameplay-panel-height: 25rem;
+  }
+
+  body.ui-refresh .app-shell {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  body.ui-refresh .topbar {
+    margin: 0.4rem 0.5rem 0;
+    padding: 0.65rem 0.85rem;
+  }
+}
+
+@media (max-width: 920px) {
+  body.ui-refresh {
+    --gameplay-panel-height: 22.5rem;
+  }
+
+  body.ui-refresh .topbar {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 0.7rem;
+    margin: 0;
+    border-radius: 0 0 24px 24px;
+    padding: calc(env(safe-area-inset-top, 0px) + 0.9rem) 0.95rem 0.95rem;
+  }
+
+  body.ui-refresh .topbar-center,
+  body.ui-refresh .topbar-actions {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  body.ui-refresh .topbar-center::-webkit-scrollbar,
+  body.ui-refresh .topbar-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.ui-refresh .topbar-actions > * {
+    flex: 0 0 auto;
+  }
+
+  body.ui-refresh .app-shell,
+  body.ui-refresh .intel-dock {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.ui-refresh .terminal-form,
+  body.ui-refresh .chat-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  body.ui-refresh {
+    --gameplay-panel-height: clamp(20rem, 56vh, 29rem);
+  }
+}
+/* ===== MATCH CONSOLE CARD TO NETWORK BOARD CARD ===== */
+
+body.ui-refresh {
+  --gameplay-card-height: clamp(38rem, 78vh, 50rem);
+}
+
+/* make both outer cards the same height */
+body.ui-refresh .board-panel,
+body.ui-refresh .dock-terminal {
+  min-height: var(--gameplay-card-height);
+  max-height: var(--gameplay-card-height);
+}
+
+/* make board panel distribute its internal space */
+body.ui-refresh .board-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+/* graph fills remaining space inside the board card */
+body.ui-refresh .board-stage {
+  min-height: 0;
+  max-height: none;
+  height: 100%;
+}
+
+/* console already uses a 4-row layout; keep feed taking leftover space */
+body.ui-refresh .dock-terminal {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
+/* feed region expands fully inside console card */
+body.ui-refresh .terminal-stack,
+body.ui-refresh .terminal-pane,
+body.ui-refresh .log-output,
+body.ui-refresh .chat-output,
+body.ui-refresh .command-deck {
+  min-height: 0;
+}
+
+/* responsive sync */
+@media (max-width: 1260px) {
+  body.ui-refresh {
+    --gameplay-card-height: 30rem;
+  }
+}
+
+@media (max-width: 920px) {
+  body.ui-refresh {
+    --gameplay-card-height: 25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  body.ui-refresh {
+    --gameplay-card-height: clamp(21rem, 60vh, 30rem);
   }
 }

@@ -1157,6 +1157,7 @@ function renderHud() {
 }
 
 function renderSelectedNodeCard() {
+if (!selectedNodeCard) return;
   const viewer = getViewer();
   const nodeId = state.hoveredNode ?? state.selectedNode;
   if (!state.gameState?.nodes?.[nodeId]) {
